@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import TextField from "@material-ui/core/TextField";
-class Input extends Component {
+import { Form, Icon, Input, Button, Checkbox } from "antd";
+class formInput extends Component {
   render() {
     const { name, label, error, ...rest } = this.props;
     return (
-      <div className="form-group">
+      <div>
         <label htmlFor={name}>{label}</label>
-        <TextField {...rest} id={name} name={name} className="form-control" />
+        <Input id={name} name={name} />
         {error && <div className="alert alert-danger">{error}</div>}
       </div>
     );
   }
 }
 
-export default Input;
+export default formInput;

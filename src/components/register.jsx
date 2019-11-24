@@ -1,24 +1,24 @@
 import React, { Component } from "react";
-import Joi from "joi-browser";
 import { Form, Icon, Input, Button, Checkbox, Alert } from "antd";
-
-class Visitors extends Component {
+import Joi from "joi-browser";
+class Register extends Component {
   state = {
-    data: { name: "", email: "", contact: "" },
+    data: { username: "", password: "", name: "" },
     errors: {}
   };
   schema = {
+    username: Joi.string()
+      .email()
+      .required()
+      .label("Username"),
+    password: Joi.string()
+      .min(5)
+      .required()
+      .label("Password"),
     name: Joi.string()
-      .max(30)
       .required()
-      .label("Name"),
-    email: Joi.string()
-      .email({ minDomainAtoms: 2 })
-      .required()
-      .label("Email"),
-    contact: Joi.string()
-      .required()
-      .label("Contact")
+      .min(1)
+      .label("Name")
   };
   validate = () => {
     console.log("I am validate");
@@ -51,7 +51,6 @@ class Visitors extends Component {
 
     this.setState({ data, errors });
   };
-
   handleSubmit = e => {
     e.preventDefault();
     console.log("I worked");
@@ -62,15 +61,8 @@ class Visitors extends Component {
 
     this.doSubmit();
   };
-
-  doSubmit = () => {
-    console.log("Submitted");
-  };
+  doSubmit = () => {};
   render() {
-    const style = {
-      marginLeft: 10
-    };
-
     return (
       <>
         <div
@@ -79,7 +71,7 @@ class Visitors extends Component {
           }}
         >
           <h1 style={{ color: "white", fontSize: "200%" }}>
-            Check-In for Meetups here!
+            Register to Check-out your Visitors!
           </h1>
           <div
             style={{
@@ -90,48 +82,48 @@ class Visitors extends Component {
               <Input
                 style={{ marginTop: "20px" }}
                 size="large"
-                id={this.state.data.name}
+                id={this.state.data.username}
+                name="username"
+                Placeholder="Username"
+                value={this.state.data.username}
+                onChange={this.handleChange}
+              />
+              {this.state.errors.username && (
+                <Alert
+                  message={this.state.errors.username}
+                  type="error"
+                  showIcon
+                />
+              )}
+
+              <Input
+                type="password"
+                style={{ marginTop: "20px" }}
+                size="large"
+                name="password"
+                id={this.state.data.password}
+                Placeholder="Password"
+                value={this.state.data.password}
+                onChange={this.handleChange}
+              />
+              {this.state.errors.password && (
+                <Alert
+                  message={this.state.errors.password}
+                  type="error"
+                  showIcon
+                />
+              )}
+              <Input
+                style={{ marginTop: "20px" }}
+                size="large"
                 name="name"
+                id={this.state.data.name}
                 Placeholder="Name"
                 value={this.state.data.name}
                 onChange={this.handleChange}
               />
               {this.state.errors.name && (
                 <Alert message={this.state.errors.name} type="error" showIcon />
-              )}
-
-              <Input
-                style={{ marginTop: "20px" }}
-                size="large"
-                name="email"
-                id={this.state.data.email}
-                Placeholder="Email"
-                value={this.state.data.email}
-                onChange={this.handleChange}
-              />
-              {this.state.errors.email && (
-                <Alert
-                  message={this.state.errors.email}
-                  type="error"
-                  showIcon
-                />
-              )}
-
-              <Input
-                size="large"
-                style={{ marginTop: "20px" }}
-                name="contact"
-                id={this.state.data.console}
-                Placeholder="Contact"
-                value={this.state.data.contact}
-                onChange={this.handleChange}
-              />
-              {this.state.errors.contact && (
-                <Alert
-                  message={this.state.errors.contact}
-                  type="error"
-                  showIcon
-                />
               )}
               <Button
                 size="large"
@@ -140,7 +132,7 @@ class Visitors extends Component {
                 className="login-form-button"
                 style={{ width: "400px", margin: "30px auto" }}
               >
-                Submit
+                Register
               </Button>
             </form>
           </div>
@@ -150,4 +142,4 @@ class Visitors extends Component {
   }
 }
 
-export default Visitors;
+export default Register;
