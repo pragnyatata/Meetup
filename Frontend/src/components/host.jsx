@@ -1,24 +1,21 @@
 import React, { Component } from "react";
-import { Form, Icon, Input, Button, Checkbox, Alert } from "antd";
 import Joi from "joi-browser";
-class Register extends Component {
+import { Form, Icon, Input, Button, Checkbox, Alert } from "antd";
+import { NavLink } from "react-router-dom";
+import auth from "../services/auth";
+import { toast } from "react-toastify";
+class Host extends Component {
   state = {
-    data: { username: "", password: "", name: "" },
+    data: { username: "", password: "" },
     errors: {}
   };
   schema = {
     username: Joi.string()
-      .email()
       .required()
       .label("Username"),
     password: Joi.string()
-      .min(5)
       .required()
-      .label("Password"),
-    name: Joi.string()
-      .required()
-      .min(1)
-      .label("Name")
+      .label("Password")
   };
   validate = () => {
     console.log("I am validate");
@@ -51,6 +48,14 @@ class Register extends Component {
 
     this.setState({ data, errors });
   };
+  componentDidMount() {
+    toast.configure({
+      autoClose: 8000,
+      draggable: false,
+      position: toast.POSITION.TOP_CENTER
+      //etc you get the idea
+    });
+  }
   handleSubmit = e => {
     e.preventDefault();
     console.log("I worked");
@@ -61,7 +66,7 @@ class Register extends Component {
 
     this.doSubmit();
   };
-  doSubmit = () => {};
+  doSubmit = async () => {};
   render() {
     return (
       <>
@@ -71,7 +76,7 @@ class Register extends Component {
           }}
         >
           <h1 style={{ color: "white", fontSize: "200%" }}>
-            Register to Check-out your Visitors!
+            Login to view your Visitors!
           </h1>
           <div
             style={{
@@ -113,18 +118,6 @@ class Register extends Component {
                   showIcon
                 />
               )}
-              <Input
-                style={{ marginTop: "20px" }}
-                size="large"
-                name="name"
-                id={this.state.data.name}
-                Placeholder="Name"
-                value={this.state.data.name}
-                onChange={this.handleChange}
-              />
-              {this.state.errors.name && (
-                <Alert message={this.state.errors.name} type="error" showIcon />
-              )}
               <Button
                 size="large"
                 type={this.validate() ? "danger" : "primary"}
@@ -132,8 +125,14 @@ class Register extends Component {
                 className="login-form-button"
                 style={{ width: "400px", margin: "30px auto" }}
               >
-                Register
+                Submit
               </Button>
+              <h1 style={{ color: "white" }}>
+                Not resitered yet?
+                <NavLink style={{ color: "white" }} to="/register">
+                  Register here
+                </NavLink>
+              </h1>
             </form>
           </div>
         </div>
@@ -142,4 +141,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default Host;

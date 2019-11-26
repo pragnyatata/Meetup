@@ -1,22 +1,25 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import { Form, Icon, Input, Button, Checkbox, Alert } from "antd";
-import { NavLink } from "react-router-dom";
-class Host extends Component {
+import { checkoutVisitor } from "../services/user";
+import { toast } from "react-toastify";
+class Checkout extends Component {
   state = {
-    data: { username: "", password: "" },
+    data: { name: "", email: "" },
     errors: {}
   };
   schema = {
-    username: Joi.string()
+    name: Joi.string()
+      .max(30)
       .required()
-      .label("Username"),
-    password: Joi.string()
+      .label("Name"),
+    email: Joi.string()
+      .email({ minDomainAtoms: 2 })
       .required()
-      .label("Password")
+      .label("Email")
   };
   validate = () => {
-    console.log("I am validate");
+    //console.log("I am validate");
     const { error } = Joi.validate(this.state.data, this.schema, {
       abortEarly: false
     });
@@ -27,7 +30,7 @@ class Host extends Component {
     return errors;
   };
   validateProperty = ({ name, value }) => {
-    console.log("I am validate property");
+    //console.log("I am validate property");
     const obj = { [name]: value };
     const schema = { [name]: this.schema[name] };
     const { error } = Joi.validate(obj, schema);
@@ -35,7 +38,7 @@ class Host extends Component {
     return error.details[0].message;
   };
   handleChange = ({ currentTarget: input }) => {
-    console.log("I am handle change");
+    //console.log("I am handle change");
     const errors = { ...this.state.errors };
     const errorMessage = this.validateProperty(input);
     if (errorMessage) errors[input.name] = errorMessage;
@@ -46,6 +49,7 @@ class Host extends Component {
 
     this.setState({ data, errors });
   };
+
   handleSubmit = e => {
     e.preventDefault();
     console.log("I worked");
@@ -56,7 +60,36 @@ class Host extends Component {
 
     this.doSubmit();
   };
+
+  doSubmit = async () => {
+    try {
+      console.log(this.state.data);
+      await checkoutVisitor(this.state.data);
+      toast.success("Successfully Checked-Out");
+      this.props.history.push("/home");
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        toast.error(ex.response.data);
+        const errors = { ...this.state.errors };
+        errors.email = ex.response.data;
+        this.setState({ errors });
+      }
+    }
+  };
+
+  componentDidMount() {
+    toast.configure({
+      autoClose: 8000,
+      draggable: false,
+      position: toast.POSITION.TOP_CENTER
+      //etc you get the idea
+    });
+  }
   render() {
+    const style = {
+      marginLeft: 10
+    };
+
     return (
       <>
         <div
@@ -65,7 +98,7 @@ class Host extends Component {
           }}
         >
           <h1 style={{ color: "white", fontSize: "200%" }}>
-            Check-In for your Visitors here!
+            Check-Out from here!
           </h1>
           <div
             style={{
@@ -76,37 +109,33 @@ class Host extends Component {
               <Input
                 style={{ marginTop: "20px" }}
                 size="large"
-                id={this.state.data.username}
-                name="username"
-                Placeholder="Username"
-                value={this.state.data.username}
+                id={this.state.data.name}
+                name="name"
+                Placeholder="Name"
+                value={this.state.data.name}
                 onChange={this.handleChange}
               />
-              {this.state.errors.username && (
+              {this.state.errors.name && (
+                <Alert message={this.state.errors.name} type="error" showIcon />
+              )}
+
+              <Input
+                style={{ marginTop: "20px" }}
+                size="large"
+                name="email"
+                id={this.state.data.email}
+                Placeholder="Email"
+                value={this.state.data.email}
+                onChange={this.handleChange}
+              />
+              {this.state.errors.email && (
                 <Alert
-                  message={this.state.errors.username}
+                  message={this.state.errors.email}
                   type="error"
                   showIcon
                 />
               )}
 
-              <Input
-                type="password"
-                style={{ marginTop: "20px" }}
-                size="large"
-                name="password"
-                id={this.state.data.password}
-                Placeholder="Password"
-                value={this.state.data.password}
-                onChange={this.handleChange}
-              />
-              {this.state.errors.password && (
-                <Alert
-                  message={this.state.errors.password}
-                  type="error"
-                  showIcon
-                />
-              )}
               <Button
                 size="large"
                 type={this.validate() ? "danger" : "primary"}
@@ -114,14 +143,8 @@ class Host extends Component {
                 className="login-form-button"
                 style={{ width: "400px", margin: "30px auto" }}
               >
-                Submit
+                Checkout
               </Button>
-              <h1 style={{ color: "white" }}>
-                Not resitered yet?
-                <NavLink style={{ color: "white" }} to="/register">
-                  Register here
-                </NavLink>
-              </h1>
             </form>
           </div>
         </div>
@@ -130,4 +153,4 @@ class Host extends Component {
   }
 }
 
-export default Host;
+export default Checkout;
