@@ -69,7 +69,8 @@ class Register extends Component {
   };
   doSubmit = async () => {
     try {
-      await registerHost(this.state.data);
+      const response = await registerHost(this.state.data);
+      auth.loginWithJwt(response.headers["x-auth-token"]);
       toast.success("Successfully Registered as Host");
       this.props.history.push("/home");
     } catch (ex) {

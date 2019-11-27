@@ -29,7 +29,7 @@ class Host extends Component {
     return errors;
   };
   validateProperty = ({ name, value }) => {
-    console.log("I am validate property");
+    //console.log("I am validate property");
     const obj = { [name]: value };
     const schema = { [name]: this.schema[name] };
     const { error } = Joi.validate(obj, schema);
@@ -37,7 +37,7 @@ class Host extends Component {
     return error.details[0].message;
   };
   handleChange = ({ currentTarget: input }) => {
-    console.log("I am handle change");
+    //console.log("I am handle change");
     const errors = { ...this.state.errors };
     const errorMessage = this.validateProperty(input);
     if (errorMessage) errors[input.name] = errorMessage;
@@ -58,7 +58,7 @@ class Host extends Component {
   }
   handleSubmit = e => {
     e.preventDefault();
-    console.log("I worked");
+    //console.log("I worked");
     const errors = this.validate();
     this.setState({ errors: errors || {} });
 
@@ -66,7 +66,20 @@ class Host extends Component {
 
     this.doSubmit();
   };
-  doSubmit = async () => {};
+  doSubmit = async () => {
+    try {
+      const { data } = this.state;
+      await auth.login(data.username, data.password);
+      const { state } = this.props.location;
+      window.location = state ? state.from.pathname : "/";
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        const errors = { ...this.state.errors };
+        errors.username = ex.response.data;
+        this.setState({ errors });
+      }
+    }
+  };
   render() {
     return (
       <>
