@@ -16,9 +16,10 @@ class NavBar extends Component {
         <PageHeader
           ghost={false}
           style={{
-            background: "#FFFFFF",
-            color: "white",
-            fontFamily: "Pacifico"
+            background: "white",
+
+            fontFamily: "Roboto",
+            opacity: 0.7
           }}
           title="Meetup"
           subTitle="A perfect place for meeting!"

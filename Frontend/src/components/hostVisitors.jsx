@@ -167,7 +167,13 @@ class HostVisitors extends Component {
         ...this.getColumnSearchProps("timeout")
       }
     ];
-    return <Table columns={columns} dataSource={meetings} />;
+    return (
+      <Table
+        columns={columns}
+        dataSource={meetings}
+        style={{ backgroundColor: "white" }}
+      />
+    );
   }
 }
 

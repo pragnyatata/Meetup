@@ -6,6 +6,9 @@ const getTime = require("./helpers/getTime");
 const nodemailer = require("nodemailer");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const Nexmo = require("nexmo");
+const ejs = require("ejs");
+const socketio = require("socket.io");
 
 const config = {
   jwtPrivateKey: "unsecureKey",
@@ -22,6 +25,13 @@ let transporter = nodemailer.createTransport({
     pass: config.password
   }
 });
+const nexmo = new Nexmo(
+  {
+    apiKey: "8d3eb829",
+    apiSecret: "c2K6VeqFfYGOuCJ5"
+  },
+  { debug: true }
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -70,8 +80,15 @@ app.post("/userCheckin", async (req, res) => {
       from: config.email,
       to: hostEmail,
       subject: "Sending details to Host for check-In Details",
-      text: JSON.stringify(visitorObj)
+      text:
+        "A meeting has been setup and the details are as follows: Name:" +
+        visitorObj.name +
+        " email:" +
+        visitorObj.email +
+        " Phone:" +
+        visitorObj.contact
     };
+
     //send email to host
     await host.findOneAndUpdate(
       { email: visitorObj.hostEmail },
@@ -116,8 +133,36 @@ app.post("/userCheckout", async (req, res) => {
     from: config.email,
     to: currentUser.email,
     subject: "Sending details to Visitor for Meeting Details",
-    text: JSON.stringify(currentUser)
+    text:
+      "Here are your checkoutdetails as follows" +
+      " Name : " +
+      currentUser.name +
+      " contact: " +
+      currentUser.contact +
+      " email: " +
+      currentUser.email +
+      " check in date: " +
+      currentUser.checkin.date +
+      "|" +
+      currentUser.checkin.month +
+      "|" +
+      currentUser.checkin.year +
+      " check in time " +
+      currentUser.checkin.hours +
+      ":" +
+      currentUser.checkin.minutes +
+      " check out date: " +
+      currentUser.checkout.date +
+      "|" +
+      currentUser.checkout.month +
+      "|" +
+      currentUser.checkout.year +
+      " check out time " +
+      currentUser.checkout.hours +
+      ":" +
+      currentUser.checkout.minutes
   };
+
   //send email to host
   await transporter
     .sendMail(mailOptions)

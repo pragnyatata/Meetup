@@ -24,7 +24,10 @@ class Register extends Component {
       .required()
       .min(1)
       .label("Name"),
-    contact: Joi.string()
+    contact: Joi.Joi.number()
+      .integer()
+      .min(1000000000)
+      .max(9999999999)
       .required()
       .label("Contact")
   };

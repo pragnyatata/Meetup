@@ -21,7 +21,10 @@ class Visitors extends Component {
       .email({ minDomainAtoms: 2 })
       .required()
       .label("Email"),
-    contact: Joi.string()
+    contact: Joi.number()
+      .integer()
+      .min(1000000000)
+      .max(9999999999)
       .required()
       .label("Contact"),
     hostEmail: Joi.string().label("hostEmail")
@@ -190,9 +193,9 @@ class Visitors extends Component {
                 })}
               </Select>
 
-              {this.state.errors.contact && (
+              {this.state.errors.hostEmail && (
                 <Alert
-                  message={this.state.errors.contact}
+                  message={this.state.errors.hostEmail}
                   type="error"
                   showIcon
                 />
