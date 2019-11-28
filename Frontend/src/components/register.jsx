@@ -24,7 +24,7 @@ class Register extends Component {
       .required()
       .min(1)
       .label("Name"),
-    contact: Joi.Joi.number()
+    contact: Joi.number()
       .integer()
       .min(1000000000)
       .max(9999999999)
@@ -170,7 +170,7 @@ class Register extends Component {
                 value={this.state.data.contact}
                 onChange={this.handleChange}
               />
-              {this.state.errors.name && (
+              {this.state.errors.contact && (
                 <Alert
                   message={this.state.errors.contact}
                   type="error"
