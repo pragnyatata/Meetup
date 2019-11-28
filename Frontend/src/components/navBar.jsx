@@ -16,7 +16,7 @@ class NavBar extends Component {
         <PageHeader
           ghost={false}
           style={{
-            background: "#353332",
+            background: "#FFFFFF",
             color: "white",
             fontFamily: "Pacifico"
           }}

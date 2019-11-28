@@ -4,7 +4,7 @@ class Home extends Component {
     console.log("I am cdm from home");
   }
   render() {
-    return <h1>Home aaaa</h1>;
+    return <div>hello</div>;
   }
 }
 

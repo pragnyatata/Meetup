@@ -73,6 +73,11 @@ app.post("/userCheckin", async (req, res) => {
       text: JSON.stringify(visitorObj)
     };
     //send email to host
+    await host.findOneAndUpdate(
+      { email: visitorObj.hostEmail },
+      { $push: { hostVisitors: visitorObj } }
+    );
+
     await transporter
       .sendMail(mailOptions)
       .then(res => {
@@ -95,8 +100,13 @@ app.post("/userCheckout", async (req, res) => {
   }
   currentUser.checkout = getTime();
   await host.findOneAndUpdate(
-    { email: currentUser.hostEmail },
-    { $push: { hostVisitors: currentUser } }
+    {
+      email: currentUser.hostEmail,
+      "hostVisitors.email": currentUser.email
+    },
+    {
+      $set: { "hostVisitors.$.checkout": currentUser.checkout }
+    }
   );
   console.log("Updated visitor list of Host");
   await visitor.findByIdAndDelete(currentUser._id);
@@ -168,7 +178,7 @@ app.post("/auth/host", async (req, res) => {
   return res.status(200).send(token);
 });
 
-app.get("/meetingScheduled/:id", auth, async (req, res) => {
+app.get("/meetingScheduled/:id", async (req, res) => {
   let currentHost = await host.findById(req.params.id);
 
   if (!currentHost) {
