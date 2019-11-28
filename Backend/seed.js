@@ -14,12 +14,14 @@ const hostData = [
   {
     name: "Prajwal",
     email: "prajwal714singh@gmail.com",
+    password: "admin",
     contact: 8307057596,
     hostVisitors: []
   },
   {
     name: "Pragnya",
     email: "pragnya25012000@gmail.com",
+    password: "admin",
     contact: 9705073030,
     hostVisitors: []
   }
@@ -30,13 +32,14 @@ async function seed() {
 
   await Host.deleteMany({});
   await Visitor.deleteMany({});
-  for (let host of hostData) {
-    await new Host({
-      name: host.name,
-      email: host.email,
-      contact: host.contact
-    }).save();
-  }
+  // for (let host of hostData) {
+  //   await new Host({
+  //     name: host.name,
+  //     email: host.email,
+  //     password: host.password,
+  //     contact: host.contact
+  //   }).save();
+  // }
 
   mongoose.disconnect();
 

@@ -5,6 +5,8 @@ import { PageHeader, Button } from "antd";
 class NavBar extends Component {
   state = {};
   render() {
+    const user = this.props.user;
+    //console.log(user);
     return (
       <div
         style={{
@@ -20,17 +22,30 @@ class NavBar extends Component {
           }}
           title="Meetup"
           subTitle="A perfect place for meeting!"
-          extra={[
-            <Button key="3">
-              <NavLink to="/host">Host</NavLink>
-            </Button>,
-            <Button key="2">
-              <NavLink to="/visitors">Visitor</NavLink>
-            </Button>,
-            <Button key="1">
-              <NavLink to="/home">About</NavLink>
-            </Button>
-          ]}
+          extra={
+            <React.Fragment>
+              {!user
+                ? [
+                    <Button key="3">
+                      <NavLink to="/host">Host</NavLink>
+                    </Button>,
+                    <Button key="2">
+                      <NavLink to="/visitors">Visitor</NavLink>
+                    </Button>,
+                    <Button key="1">
+                      <NavLink to="/home">About</NavLink>
+                    </Button>
+                  ]
+                : [
+                    <Button key="2">
+                      <NavLink to="/logout">Logout</NavLink>
+                    </Button>,
+                    <Button key="1">
+                      <NavLink to="/home">About</NavLink>
+                    </Button>
+                  ]}
+            </React.Fragment>
+          }
         ></PageHeader>
       </div>
     );

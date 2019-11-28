@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import { Form, Icon, Input, Button, Checkbox, Alert } from "antd";
-import { NavLink } from "react-router-dom";
-import auth from "../services/auth";
+import { NavLink, Redirect } from "react-router-dom";
+import auth, { getCurrentUser } from "../services/auth";
 import { toast } from "react-toastify";
 class Host extends Component {
   state = {
@@ -70,8 +70,9 @@ class Host extends Component {
     try {
       const { data } = this.state;
       await auth.login(data.username, data.password);
+      const currentUser = getCurrentUser();
       const { state } = this.props.location;
-      window.location = state ? state.from.pathname : "/";
+      window.location = "/host/" + currentUser._id;
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         const errors = { ...this.state.errors };

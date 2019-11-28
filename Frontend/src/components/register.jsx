@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { Form, Icon, Input, Button, Checkbox, Alert } from "antd";
 import Joi from "joi-browser";
-import auth from "../services/auth";
+import auth, { getCurrentUser } from "../services/auth";
 import { registerHost } from "../services/user";
 import http from "../services/http";
 import { toast } from "react-toastify";
+import * as jwt_decode from "jwt-decode";
 class Register extends Component {
   state = {
     data: { email: "", password: "", name: "", contact: "" },
@@ -59,7 +60,7 @@ class Register extends Component {
   };
   handleSubmit = e => {
     e.preventDefault();
-    console.log("I worked");
+    //console.log("I worked");
     const errors = this.validate();
     this.setState({ errors: errors || {} });
 
@@ -72,7 +73,10 @@ class Register extends Component {
       const response = await registerHost(this.state.data);
       auth.loginWithJwt(response.headers["x-auth-token"]);
       toast.success("Successfully Registered as Host");
-      this.props.history.push("/home");
+      //window.location = "/";
+      const currentUser = getCurrentUser();
+      //console.log(currentUser);
+      window.location = "/host/" + currentUser._id;
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);

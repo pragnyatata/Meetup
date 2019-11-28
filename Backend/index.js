@@ -4,6 +4,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const getTime = require("./helpers/getTime");
 const nodemailer = require("nodemailer");
+const _ = require("lodash");
+const bcrypt = require("bcrypt");
 
 const config = {
   jwtPrivateKey: "unsecureKey",
@@ -28,6 +30,7 @@ app.use(cors());
 
 const visitor = require("./models/visitorSchema");
 const host = require("./models/hostSchema");
+const auth = require("./middlewares/auth");
 
 mongoose
   .connect(config.db)
@@ -123,17 +126,58 @@ app.get("/host", async (req, res) => {
 app.post("/registerHost", async (req, res) => {
   console.log(req.body);
   let existingHost = await host.findOne({ email: req.body.email });
+
   if (existingHost) {
-    return res.status(400).send("Host Already Exists");
+    return res.status(400).send("Host Already Registered");
   }
+
   let hostObj = new host({
     name: req.body.name,
     email: req.body.email,
+    password: req.body.password,
     contact: req.body.contact
   });
+  console.log(hostObj);
+  //let salt = await bcrypt.genSalt(10);
+  hostObj.password = await bcrypt.hash(hostObj.password, 10);
 
+  const token = hostObj.generateAuthToken();
+  // console.log(token);
   hostObj = await hostObj.save();
-  return res.status(200).send("Successfully Registered Host");
+
+  return res
+    .header("x-auth-token", token)
+    .header("access-control-expose-headers", "x-auth-token")
+    .send(_.pick(hostObj, ["_id", "name", "email"]));
+});
+
+app.post("/auth/host", async (req, res) => {
+  let currentHost = await host.findOne({ email: req.body.email });
+
+  if (!currentHost) return res.status(400).send("You are Not Registered");
+
+  const validPassword = await bcrypt.compare(
+    req.body.password,
+    currentHost.password
+  );
+  if (!validPassword)
+    return res.status(400).send("Invalid username or password");
+
+  const token = currentHost.generateAuthToken();
+
+  return res.status(200).send(token);
+});
+
+app.get("/meetingScheduled/:id", auth, async (req, res) => {
+  let currentHost = await host.findById(req.params.id);
+
+  if (!currentHost) {
+    return res.status(400).send("Host Does not Exist");
+  }
+
+  let currentMeetings = currentHost.hostVisitors;
+
+  return res.send(currentMeetings);
 });
 
 const port = process.env.PORT || config.port;

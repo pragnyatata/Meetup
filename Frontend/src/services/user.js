@@ -9,11 +9,15 @@ export function checkinVisitor(visitor) {
 }
 
 export function checkoutVisitor(visitor) {
-  console.log(visitor);
+  //console.log(visitor);
   return http.post(apiUrl + "/userCheckout", visitor);
 }
 
 export function registerHost(host) {
-  console.log(host);
+  //console.log(host);
   return http.post(apiUrl + "/registerHost", host);
+}
+
+export function getMeetings(host) {
+  return http.get(apiUrl + "/meetingScheduled/" + host._id);
 }
