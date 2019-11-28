@@ -5,12 +5,7 @@ Innovaccer SDE internship assignment.
 ## Install dependencies
 npm install for both frontend and backend
 
-## Create Database
-Create a MongoDb datbase by the name of Test
-
-
 ## Server runs on http://localhost:3001 and client on http://localhost:3000
-
 
 ```
 apisecret = Nexmo_Secretkey
