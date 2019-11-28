@@ -94,7 +94,22 @@ app.post("/userCheckin", async (req, res) => {
       { email: visitorObj.hostEmail },
       { $push: { hostVisitors: visitorObj } }
     );
-
+    //Nexmo code has been commented since it needs some Virtualphone no to send the messages.
+    // const text ="A meeting has been setup and the details are as follows: Name:" +
+    // visitorObj.name +
+    // " email:" +
+    // visitorObj.email +
+    // " Phone:" +
+    // visitorObj.contact
+    // const from=someno;
+    // const to = hostno;
+    // await nexmo.message.sendSms(from, to, text, function(err, res) {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     console.log(res);
+    //   }
+    // });
     await transporter
       .sendMail(mailOptions)
       .then(res => {
@@ -103,6 +118,7 @@ app.post("/userCheckin", async (req, res) => {
       .catch(err => console.log(err));
     visitorObj = await visitorObj.save();
     return res.status(200).send("Checkin succesfull");
+
     //console.log("Checkin time: ", checkintime);
   }
 });
